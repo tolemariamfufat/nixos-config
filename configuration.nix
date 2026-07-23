@@ -105,7 +105,7 @@
   brave
   libreoffice-fresh
   gnome-extension-manager
-  gnomeExtensions.pop-shell
+  gnomeExtensions.forge
   gnome-tweaks
   ghostty
   ];
