@@ -103,6 +103,11 @@
   wget
   git
   brave
+  libreoffice-fresh
+  gnome-extension-manager
+  gnomeExtensions.pop-shell
+  gnome-tweaks
+  ghostty
   ];
   # Enable Zsh & Oh My Zsh with extra plugins
   programs.zsh = {
