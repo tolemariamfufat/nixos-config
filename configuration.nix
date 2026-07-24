@@ -142,9 +142,10 @@
   ghostty
   spotify
   ];
-  # Enable Zsh & Oh My Zsh with extra plugins
+
+# Enable Zsh & Oh My Zsh with extra plugins
   programs.zsh = {
-    enable = true;
+    enable = true; 
     
     # Enable Auto-Suggestions & Syntax Highlighting via NixOS
     autosuggestions.enable = true;
@@ -155,8 +156,22 @@
       plugins = [ "git" "sudo" ];
       theme = "robbyrussell";
     };
-  };
 
+    # Handy shortcuts
+    shellAliases = {
+      nswitch = "sudo nixos-rebuild switch --flake /etc/nixos#";
+      gstatus = "git status";
+    };
+
+    # Custom function to add, commit, and push in one line
+    interactiveShellInit = ''
+      gpush() {
+        git add .
+        git commit -m "$1"
+        git push
+      }
+    '';
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
