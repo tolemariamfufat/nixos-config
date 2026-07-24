@@ -9,7 +9,12 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
-
+# System Fonts
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    font-awesome
+  ];
   # Bootloader.
   boot = {
   # Keep your existing bootloader settings:
