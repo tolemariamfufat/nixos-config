@@ -140,6 +140,7 @@
   gnomeExtensions.forge
   gnome-tweaks
   ghostty
+  fastfetch
   ];
 
 # Enable Zsh & Oh My Zsh with extra plugins
