@@ -24,7 +24,7 @@
  # Enable Rofi (Wayland fork)
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi-wayland;
+    package = pkgs.rofi;
   };
 
   # Manage programs declaratively
