@@ -140,6 +140,7 @@
   gnomeExtensions.forge
   gnome-tweaks
   ghostty
+  spotify
   ];
   # Enable Zsh & Oh My Zsh with extra plugins
   programs.zsh = {
