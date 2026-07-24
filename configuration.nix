@@ -141,6 +141,7 @@
   gnome-tweaks
   ghostty
   spotify
+  unzip
   ];
 
 # Enable Zsh & Oh My Zsh with extra plugins
