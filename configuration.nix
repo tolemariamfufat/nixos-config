@@ -11,8 +11,35 @@
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+  # Keep your existing bootloader settings:
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = true;
+    # 1. Enable Plymouth graphical splash screen
+    plymouth.enable = true;
+
+    # 2. Hide systemd-boot menu delay (Press Space during boot if you need the menu)
+    loader.timeout = 0;
+
+    # 3. Use systemd in stage-1 initrd for a truly silent early boot sequence
+    initrd.systemd.enable = true;
+    initrd.verbose = false;
+
+    # 4. Hide kernel log messages from TTY console
+    consoleLogLevel = 0;
+
+    # 5. Essential Kernel parameters for silent/clean transitions
+    kernelParams = [
+      "quiet"                        # Suppress standard kernel messages
+      "splash"                       # Enable Plymouth splash display
+      "boot.shell_on_fail"
+      "loglevel=3"                   # Only display critical errors
+      "rd.systemd.show_status=false" # Hide systemd status messages in initrd
+      "rd.udev.log_level=3"          # Quiet early hardware detection
+      "udev.log_priority=3"          # Suppress udev warnings
+      "vt.global_cursor_default=0"   # Hide the blinking text cursor on screen
+    ];
+  };
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -89,7 +116,7 @@
   };
 
   # Install firefox.
-  programs.firefox.enable = true;
+  programs.firefox.enable = false;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
