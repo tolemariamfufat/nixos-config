@@ -12,6 +12,15 @@
   home.packages = with pkgs; [
     # Packages for your user account only (e.g., neofetch, htop, etc.)
   ];
+ 
+ # Enable and configure Kitty terminal
+  programs.kitty = {
+    enable = true;
+    settings = {
+      confirm_os_window_close = 0;
+      background_opacity = "0.9"; # Optional: sleek slight transparency
+    };
+  };
 
   # Manage programs declaratively
   programs.git = {
