@@ -21,6 +21,11 @@
       background_opacity = "0.9"; # Optional: sleek slight transparency
     };
   };
+ # Enable Rofi (Wayland fork)
+  programs.rofi = {
+    enable = true;
+    package = pkgs.rofi-wayland;
+  };
 
   # Manage programs declaratively
   programs.git = {
