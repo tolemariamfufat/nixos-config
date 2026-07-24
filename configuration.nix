@@ -185,8 +185,9 @@
   system.stateVersion = "26.05"; # Did you read the comment?
 
 programs.hyprland = {
-  enable = true;
-  xwayland.enable = true; # Enables support for older X11 apps
-};
+    enable = true;
+    xwayland.enable = true; # Enables support for older X11 apps
+    withUWSM = true;        # Enables UWSM systemd integration
+  };
 
 }

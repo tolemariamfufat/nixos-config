@@ -5,6 +5,9 @@
   home.homeDirectory = "/home/to";
   home.stateVersion = "24.05"; 
 
+  # Disable Home Manager's systemd integration to prevent conflict with UWSM
+  wayland.windowManager.hyprland.systemd.enable = false;
+
   # User packages
   home.packages = with pkgs; [
     pavucontrol # Audio volume GUI
