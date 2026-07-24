@@ -179,4 +179,9 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "26.05"; # Did you read the comment?
 
+programs.hyprland = {
+  enable = true;
+  xwayland.enable = true; # Enables support for older X11 apps
+};
+
 }
