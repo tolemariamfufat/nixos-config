@@ -19,10 +19,11 @@
     };
   };
 
-  # Enable Rofi Application Launcher
+  # Enable Rofi with permanent Monokai theme
   programs.rofi = {
     enable = true;
     package = pkgs.rofi;
+    theme = "Monokai";
   };
 
   # Enable and style Waybar Status Bar
