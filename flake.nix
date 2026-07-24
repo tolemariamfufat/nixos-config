@@ -1,18 +1,30 @@
 {
-  description = "NixOS Flake Configuration";
+  description = "NixOS system configuration with Home Manager";
 
   inputs = {
-    # Tracks the 26.05 stable channel.
-    # Change to "nixos-unstable" if you prefer rolling release!
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable"; # or your release branch
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
-        ./hardware-configuration.nix
         ./configuration.nix
+
+        # Add Home Manager as a module
+        home-manager.nixosModules.home-manager
+        {
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+
+          # Replace 'to' with your exact username
+          home-manager.users.to = import ./home.nix;
+        }
       ];
     };
   };
