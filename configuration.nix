@@ -10,7 +10,7 @@
     ./hardware-configuration.nix
   ];
 
-  # Bootloader, Silent Plymouth Boot, and Hardware Freeze Fixes
+  # Bootloader & Hardware Freeze Fixes (Verbose Boot)
   boot = {
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -19,40 +19,22 @@
     # Early KMS for Intel iGPU (Prevents sleep/wake graphics freezes)
     initrd.kernelModules = [ "i915" ];
 
-    # Graphical splash screen
-    plymouth = {
-      enable = true;
-      theme = "bgrt"; # Uses OEM motherboard vendor logo
-    };
-
-    # Silent boot & ACPI Deep Sleep Configuration
-    initrd.systemd.enable = true;
-    initrd.verbose = false;
-    initrd.systemd.emergencyAccess = true;
-    consoleLogLevel = 0;
-
+    # ACPI Deep Sleep Fix (Kept for sleep stability without forcing quiet boot)
     kernelParams = [
       "mem_sleep_default=deep"
-      "quiet"
-      "splash"
-      "loglevel=3"
-      "rd.systemd.show_status=false"
-      "rd.udev.log_level=3"
-      "udev.log_priority=3"
     ];
   };
 
-  # System Fonts
+  # System Fonts (Compatible with NixOS 24.05)
   fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.fira-code
+    (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" ]; })
     font-awesome
   ];
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
-  # Set your time zone & locale
+  # Time zone & locale
   time.timeZone = "America/New_York";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
@@ -67,7 +49,7 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable X11 & GNOME
+  # Desktop Environment & Display Manager
   services.xserver.enable = true;
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
@@ -76,13 +58,7 @@
   services.thermald.enable = true;
   zramSwap.enable = true;
 
-  # Keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
-
-  # Enable Printing & Audio (Pipewire)
+  # Printing & Audio (Pipewire)
   services.printing.enable = true;
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -93,7 +69,7 @@
     pulse.enable = true;
   };
 
-  # Define User Account
+  # User Account
   users.users."to" = {
     isNormalUser = true;
     description = "to";
@@ -102,7 +78,7 @@
     packages = with pkgs; [];
   };
 
-  # Nix Settings & Unfree Packages
+  # Nix Settings & Flakes
   programs.firefox.enable = false;
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -121,14 +97,13 @@
     fastfetch
   ];
 
-  # Hyprland & UWSM Integration
+  # Hyprland Integration
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    withUWSM = true;
   };
 
-  # Zsh & Oh My Zsh
+  # Zsh Configuration
   programs.zsh = {
     enable = true;
     autosuggestions.enable = true;
