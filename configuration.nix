@@ -14,7 +14,7 @@
   boot = {
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
-    loader.timeout = 0; # Press Space on boot to reveal systemd-boot menu
+    loader.timeout = 5; # Shows systemd-boot generation menu for 5 seconds
 
     # Early KMS for Intel iGPU (Prevents sleep/wake graphics freezes)
     initrd.kernelModules = [ "i915" ];
