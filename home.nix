@@ -5,50 +5,41 @@
   home.homeDirectory = "/home/to";
   home.stateVersion = "24.05"; 
 
-  # Hyprland Configuration with Keybindings & UWSM Compatibility
+  # Hyprland Configuration
   wayland.windowManager.hyprland = {
     enable = true;
-    
-    # Disable Home Manager systemd integration so UWSM handles units safely
-    systemd.enable = false; 
+    configType = "hyprlang"; # Silences configType deprecation warning
+    systemd.enable = false;  # Prevents UWSM conflict
 
     settings = {
-      # Autostart Waybar
       exec-once = [
         "waybar &"
       ];
       
-      # Super / Windows key
       "$mainMod" = "SUPER";
 
-      # Keybindings
       bind = [
-        # Launch Apps
         "$mainMod, Q, exec, kitty"
         "$mainMod, R, exec, rofi -show drun"
         "$mainMod, B, exec, brave"
         "$mainMod, E, exec, nautilus"
 
-        # Window Controls
         "$mainMod, C, killactive,"
         "$mainMod, M, exit,"
         "$mainMod, V, togglefloating,"
         "$mainMod, F, fullscreen,"
 
-        # Move Focus with Arrow Keys
         "$mainMod, left, movefocus, l"
         "$mainMod, right, movefocus, r"
         "$mainMod, up, movefocus, u"
         "$mainMod, down, movefocus, d"
 
-        # Switch Workspaces (1-5)
         "$mainMod, 1, workspace, 1"
         "$mainMod, 2, workspace, 2"
         "$mainMod, 3, workspace, 3"
         "$mainMod, 4, workspace, 4"
         "$mainMod, 5, workspace, 5"
 
-        # Move Window to Workspace
         "$mainMod SHIFT, 1, movetoworkspace, 1"
         "$mainMod SHIFT, 2, movetoworkspace, 2"
         "$mainMod SHIFT, 3, movetoworkspace, 3"
@@ -56,7 +47,6 @@
         "$mainMod SHIFT, 5, movetoworkspace, 5"
       ];
 
-      # Mouse Bindings (Move / Resize Windows)
       bindm = [
         "$mainMod, mouse:272, movewindow"
         "$mainMod, mouse:273, resizewindow"
@@ -66,7 +56,7 @@
 
   # User packages
   home.packages = with pkgs; [
-    pavucontrol # Audio volume GUI
+    pavucontrol
   ];
 
   # Enable Kitty Terminal
@@ -78,14 +68,14 @@
     };
   };
 
-  # Enable Rofi with permanent Monokai theme
+  # Enable Rofi
   programs.rofi = {
     enable = true;
     package = pkgs.rofi;
     theme = "Monokai";
   };
 
-  # Enable and style Waybar Status Bar
+  # Enable Waybar
   programs.waybar = {
     enable = true;
     settings = {
@@ -232,11 +222,15 @@
     '';
   };
 
-  # Git Configuration
+  # Git Configuration (Updated options syntax)
   programs.git = {
     enable = true;
-    userName = "tolemariamfufat";
-    userEmail = "tolemariamfufat@gmail.com";
+    settings = {
+      user = {
+        name = "tolemariamfufat";
+        email = "tolemariamfufat@gmail.com";
+      };
+    };
   };
 
   # Enable Home Manager self-management
