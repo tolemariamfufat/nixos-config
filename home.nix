@@ -14,8 +14,11 @@
 
   # User packages
   home.packages = with pkgs; [
-    pavucontrol              # Audio volume GUI
-    nerd-fonts.jetbrains-mono # (Use (nerdfonts.override { fonts = [ "JetBrainsMono" ]; }) if on strict 24.05)
+    pavucontrol # Audio volume GUI
+    
+    # STABLE 24.05 SYNTAX FIX:
+    # On 24.05, nerd-fonts MUST be installed via override.
+    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   ];
 
   # Enable Kitty Terminal
