@@ -68,6 +68,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.enable = true; # Manages audio routing and quality
   };
 
   # User Account
@@ -89,6 +90,7 @@
     vim
     wget
     git
+    alsa-utils # Provides alsamixer and alsactl
     (brave.override { commandLineArgs = [ "--password-store=basic" ]; })
     libreoffice-fresh
     gnome-extension-manager
@@ -102,7 +104,7 @@
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
-    withUWSM = true; # Enables UWSM session support for systemd & GDM
+    withUWSM = true;
   };
 
   # Zsh Configuration
