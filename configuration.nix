@@ -98,10 +98,11 @@
     fastfetch
   ];
 
-  # Hyprland Integration
+  # Hyprland Integration with UWSM
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
+    withUWSM = true; # Enables UWSM session support for systemd & GDM
   };
 
   # Zsh Configuration
