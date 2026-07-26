@@ -21,7 +21,10 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
 
-          home-manager.users.to = import ./home.nix;
+          home-manager.users.to = { lib, ... }: {
+            imports = [ ./home.nix ];
+            home.homeDirectory = lib.mkForce "/home/to";
+          };
         }
       ];
     };
