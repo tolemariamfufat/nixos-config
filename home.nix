@@ -187,11 +187,15 @@
     '';
   };
 
-  # Git Configuration
+  # Git Configuration (Updated Syntax)
   programs.git = {
     enable = true;
-    userName = "tolemariamfufat";
-    userEmail = "tolemariamfufat@gmail.com";
+    settings = {
+      user = {
+        name = "tolemariamfufat";
+        email = "tolemariamfufat@gmail.com";
+      };
+    };
   };
 
   # Enable Home Manager self-management
