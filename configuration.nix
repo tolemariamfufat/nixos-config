@@ -10,29 +10,29 @@
     ./hardware-configuration.nix
   ];
 
-  # System Fonts
-  fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-    nerd-fonts.fira-code
-    font-awesome
-  ];
-
-  # Bootloader & Silent Plymouth Boot Configuration
+  # Bootloader, Silent Plymouth Boot, and Hardware Freeze Fixes
   boot = {
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
-    loader.timeout = 0; # Hide systemd-boot delay (press Space on boot if needed)
+    loader.timeout = 0; # Press Space on boot to reveal systemd-boot menu
+
+    # Early KMS for Intel iGPU (Prevents sleep/wake graphics freezes)
+    initrd.kernelModules = [ "i915" ];
 
     # Graphical splash screen
-    plymouth.enable = true;
+    plymouth = {
+      enable = true;
+      theme = "bgrt"; # Uses OEM motherboard vendor logo
+    };
 
-    # Silent boot parameters
+    # Silent boot & ACPI Deep Sleep Configuration
     initrd.systemd.enable = true;
     initrd.verbose = false;
     initrd.systemd.emergencyAccess = true;
     consoleLogLevel = 0;
 
     kernelParams = [
+      "mem_sleep_default=deep"
       "quiet"
       "splash"
       "loglevel=3"
@@ -41,6 +41,13 @@
       "udev.log_priority=3"
     ];
   };
+
+  # System Fonts
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
+    font-awesome
+  ];
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
@@ -65,13 +72,17 @@
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
+  # Thermal Management & Compressed Swap
+  services.thermald.enable = true;
+  zramSwap.enable = true;
+
   # Keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  # Enable Printing & Audio
+  # Enable Printing & Audio (Pipewire)
   services.printing.enable = true;
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -110,7 +121,7 @@
     fastfetch
   ];
 
-  # Hyprland & UWSM Configuration
+  # Hyprland & UWSM Integration
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -130,7 +141,7 @@
     };
 
     shellAliases = {
-      nswitch = "sudo nixos-rebuild switch --flake /etc/nixos#";
+      nswitch = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
       gstatus = "git status";
     };
 
@@ -143,6 +154,5 @@
     '';
   };
 
-  # Recommended: Set this to the version you originally installed (e.g. "24.05" or "24.11")
   system.stateVersion = "24.05";
 }
