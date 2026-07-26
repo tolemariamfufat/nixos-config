@@ -34,17 +34,27 @@
     consoleLogLevel = 0;
 
     # 5. Essential Kernel parameters for silent/clean transitions
-    kernelParams = [
-      "quiet"                        # Suppress standard kernel messages
-      "splash"                       # Enable Plymouth splash display
-      "boot.shell_on_fail"
-      "loglevel=3"                   # Only display critical errors
-      "rd.systemd.show_status=false" # Hide systemd status messages in initrd
-      "rd.udev.log_level=3"          # Quiet early hardware detection
-      "udev.log_priority=3"          # Suppress udev warnings
-      "vt.global_cursor_default=0"   # Hide the blinking text cursor on screen
-    ];
-  };
+    { pkgs, ... }: {
+  # 1. Enable Plymouth for a visual splash screen during boot
+  boot.plymouth.enable = true;
+
+  # 2. Kernel parameters to hide low-level text noise
+  boot.kernelParams = [
+    "quiet"
+    "splash"
+    "loglevel=3"
+    "rd.systemd.show_status=false"
+    "rd.udev.log_level=3"
+    "udev.log_priority=3"
+  ];
+
+  # 3. Silence early stage-1 (initrd) console printing
+  boot.consoleLogLevel = 0;
+  boot.initrd.verbose = false;
+
+  # 4. Valid NixOS option to grant emergency shell access if stage-1 fails
+  boot.initrd.systemd.emergencyAccess = true;
+}
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
