@@ -1,77 +1,53 @@
 # Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
+# your system. Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
-# System Fonts
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
+
+  # System Fonts
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
     nerd-fonts.fira-code
     font-awesome
   ];
-  # Bootloader.
+
+  # Bootloader & Silent Plymouth Boot Configuration
   boot = {
-  # Keep your existing bootloader settings:
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
-    # 1. Enable Plymouth graphical splash screen
+    loader.timeout = 0; # Hide systemd-boot delay (press Space on boot if needed)
+
+    # Graphical splash screen
     plymouth.enable = true;
 
-    # 2. Hide systemd-boot menu delay (Press Space during boot if you need the menu)
-    loader.timeout = 0;
-
-    # 3. Use systemd in stage-1 initrd for a truly silent early boot sequence
+    # Silent boot parameters
     initrd.systemd.enable = true;
     initrd.verbose = false;
-
-    # 4. Hide kernel log messages from TTY console
+    initrd.systemd.emergencyAccess = true;
     consoleLogLevel = 0;
 
-    # 5. Essential Kernel parameters for silent/clean transitions
-    { pkgs, ... }: {
-  # 1. Enable Plymouth for a visual splash screen during boot
-  boot.plymouth.enable = true;
+    kernelParams = [
+      "quiet"
+      "splash"
+      "loglevel=3"
+      "rd.systemd.show_status=false"
+      "rd.udev.log_level=3"
+      "udev.log_priority=3"
+    ];
+  };
 
-  # 2. Kernel parameters to hide low-level text noise
-  boot.kernelParams = [
-    "quiet"
-    "splash"
-    "loglevel=3"
-    "rd.systemd.show_status=false"
-    "rd.udev.log_level=3"
-    "udev.log_priority=3"
-  ];
-
-  # 3. Silence early stage-1 (initrd) console printing
-  boot.consoleLogLevel = 0;
-  boot.initrd.verbose = false;
-
-  # 4. Valid NixOS option to grant emergency shell access if stage-1 fails
-  boot.initrd.systemd.emergencyAccess = true;
-}
-
-  networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # Enable networking
+  networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
+  # Set your time zone & locale
   time.timeZone = "America/New_York";
-
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
     LC_IDENTIFICATION = "en_US.UTF-8";
@@ -84,23 +60,19 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  # Enable the X11 windowing system.
+  # Enable X11 & GNOME
   services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
-  # Configure keymap in X11
+  # Keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  # Enable CUPS to print documents.
+  # Enable Printing & Audio
   services.printing.enable = true;
-
-  # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -108,56 +80,46 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define User Account
   users.users."to" = {
     isNormalUser = true;
     description = "to";
     extraGroups = [ "networkmanager" "wheel" ];
     shell = pkgs.zsh;
-    packages = with pkgs; [
-    #  thunderbird
-    ];
+    packages = with pkgs; [];
   };
 
-  # Install firefox.
+  # Nix Settings & Unfree Packages
   programs.firefox.enable = false;
-
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  # Enable Flakes and the new Nix command line tool
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  # System Packages
   environment.systemPackages = with pkgs; [
-  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  wget
-  git
-  (brave.override { commandLineArgs = [ "--password-store=basic" ]; })
-  libreoffice-fresh
-  gnome-extension-manager
-  gnomeExtensions.forge
-  gnome-tweaks
-  ghostty
-  fastfetch
+    vim
+    wget
+    git
+    (brave.override { commandLineArgs = [ "--password-store=basic" ]; })
+    libreoffice-fresh
+    gnome-extension-manager
+    gnomeExtensions.forge
+    gnome-tweaks
+    ghostty
+    fastfetch
   ];
 
-# Enable Zsh & Oh My Zsh with extra plugins
+  # Hyprland & UWSM Configuration
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    withUWSM = true;
+  };
+
+  # Zsh & Oh My Zsh
   programs.zsh = {
-    enable = true; 
-    
-    # Enable Auto-Suggestions & Syntax Highlighting via NixOS
+    enable = true;
     autosuggestions.enable = true;
     syntaxHighlighting.enable = true;
 
@@ -167,13 +129,11 @@
       theme = "robbyrussell";
     };
 
-    # Handy shortcuts
     shellAliases = {
       nswitch = "sudo nixos-rebuild switch --flake /etc/nixos#";
       gstatus = "git status";
     };
 
-    # Custom function to add, commit, and push in one line
     interactiveShellInit = ''
       gpush() {
         git add .
@@ -183,37 +143,6 @@
     '';
   };
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "26.05"; # Did you read the comment?
-
-programs.hyprland = {
-    enable = true;
-    xwayland.enable = true; # Enables support for older X11 apps
-    withUWSM = true;        # Enables UWSM systemd integration
-  };
-
+  # Recommended: Set this to the version you originally installed (e.g. "24.05" or "24.11")
+  system.stateVersion = "24.05";
 }
