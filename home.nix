@@ -5,8 +5,16 @@
   home.homeDirectory = "/home/to";
   home.stateVersion = "24.05"; 
 
-  # Disable Home Manager's systemd integration to prevent conflict with UWSM
-  wayland.windowManager.hyprland.systemd.enable = false;
+  # Configure Hyprland & Autostart Waybar
+  wayland.windowManager.hyprland = {
+    enable = true;
+    systemd.enable = false; # Prevents UWSM conflict
+    settings = {
+      exec-once = [
+        "waybar &"
+      ];
+    };
+  };
 
   # User packages
   home.packages = with pkgs; [
@@ -95,7 +103,6 @@
           on-click = "pavucontrol";
         };
 
-        # Laptop Battery Module
         battery = {
           states = {
             warning = 30;
@@ -163,7 +170,6 @@
       #memory { color: #fab387; }
       #window { color: #bac2de; font-weight: normal; }
 
-      /* Battery colors based on state */
       #battery { color: #a6e3a1; }
       #battery.charging, #battery.plugged { color: #a6e3a1; }
       #battery.warning { color: #f9e2af; }
@@ -181,12 +187,8 @@
   # Git Configuration
   programs.git = {
     enable = true;
-    settings = {
-      user = {
-        name = "tolemariamfufat";
-        email = "tolemariamfufat@gmail.com";
-      };
-    };
+    userName = "tolemariamfufat";
+    userEmail = "tolemariamfufat@gmail.com";
   };
 
   # Enable Home Manager self-management
