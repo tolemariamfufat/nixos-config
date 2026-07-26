@@ -5,19 +5,12 @@
   home.homeDirectory = "/home/to";
   home.stateVersion = "24.05"; 
 
-  # MANDATORY FOR FONTS TO WORK IN HM:
-  # Discovers fonts installed in home.packages and builds fc-cache
-  fonts.fontconfig.enable = true;
-
   # Disable Home Manager's systemd integration to prevent conflict with UWSM
   wayland.windowManager.hyprland.systemd.enable = false;
 
   # User packages
   home.packages = with pkgs; [
     pavucontrol # Audio volume GUI
-    
-    # Updated nerd-fonts syntax for current nixpkgs:
-    nerd-fonts.jetbrains-mono
   ];
 
   # Enable Kitty Terminal
@@ -102,6 +95,7 @@
           on-click = "pavucontrol";
         };
 
+        # Laptop Battery Module
         battery = {
           states = {
             warning = 30;
@@ -112,10 +106,6 @@
           format-plugged = " {capacity}%";
           format-alt = "{time} {icon}";
           format-icons = [ "󰂎" "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
-        };
-
-        tray = {
-          spacing = 10;
         };
       };
     };
@@ -173,6 +163,7 @@
       #memory { color: #fab387; }
       #window { color: #bac2de; font-weight: normal; }
 
+      /* Battery colors based on state */
       #battery { color: #a6e3a1; }
       #battery.charging, #battery.plugged { color: #a6e3a1; }
       #battery.warning { color: #f9e2af; }
@@ -194,9 +185,6 @@
       user = {
         name = "tolemariamfufat";
         email = "tolemariamfufat@gmail.com";
-      };
-      safe = {
-        directory = "/etc/nixos";
       };
     };
   };
