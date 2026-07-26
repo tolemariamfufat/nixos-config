@@ -16,9 +16,8 @@
   home.packages = with pkgs; [
     pavucontrol # Audio volume GUI
     
-    # STABLE 24.05 SYNTAX FIX:
-    # On 24.05, nerd-fonts MUST be installed via override.
-    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
+    # Updated nerd-fonts syntax for current nixpkgs:
+    nerd-fonts.jetbrains-mono
   ];
 
   # Enable Kitty Terminal
@@ -191,8 +190,15 @@
   # Git Configuration
   programs.git = {
     enable = true;
-    userName = "tolemariamfufat";
-    userEmail = "tolemariamfufat@gmail.com";
+    settings = {
+      user = {
+        name = "tolemariamfufat";
+        email = "tolemariamfufat@gmail.com";
+      };
+      safe = {
+        directory = "/etc/nixos";
+      };
+    };
   };
 
   # Enable Home Manager self-management

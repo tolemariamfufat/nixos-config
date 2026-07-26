@@ -25,9 +25,10 @@
     ];
   };
 
-  # System Fonts (Compatible with NixOS 24.05)
+  # System Fonts
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "JetBrainsMono" "FiraCode" ]; })
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-code
     font-awesome
   ];
 
