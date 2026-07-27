@@ -116,6 +116,8 @@
 
   services.desktopManager.gnome.enable = true;
 
+  # Disable Wi-Fi power saving mode
+  networking.networkmanager.wifi.powersave = false;
 
 
   # Thermal Management & Compressed Swap
