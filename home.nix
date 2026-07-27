@@ -35,11 +35,11 @@
     mediawriter # Fedora Media Writer - create bootable USBs
 
     # Updated nerd-fonts syntax for current nixpkgs:
-
+    spotube
+   
     nerd-fonts.jetbrains-mono
 
   ];
-
 
 
   # Enable Kitty Terminal
