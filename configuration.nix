@@ -198,7 +198,7 @@
 
     gnome-extension-manager
 
-    gnomeExtensions.forge
+    gnomeExtensions.pop-shell
 
     gnome-tweaks
 
@@ -207,7 +207,6 @@
     fastfetch
 
   ];
-
 
 
   # Hyprland Integration with UWSM
