@@ -1,130 +1,273 @@
 # Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
+
+# your system. Help is available in the configuration.nix(5) man page
+
 # and in the NixOS manual (accessible by running ‘nixos-help’).
+
+
 
 { config, pkgs, ... }:
 
+
+
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
+
+  imports = [
+
+    # Include the results of the hardware scan.
+
+    ./hardware-configuration.nix
+
+  ];
+
+
+
+  # Bootloader & Hardware Freeze Fixes (Verbose Boot)
+
+  boot = {
+
+    loader.systemd-boot.enable = true;
+
+    loader.efi.canTouchEfiVariables = true;
+
+    loader.timeout = 5; # Shows systemd-boot generation menu for 5 seconds
+
+
+
+    # Early KMS for Intel iGPU (Prevents sleep/wake graphics freezes)
+
+    initrd.kernelModules = [ "i915" ];
+
+
+
+    # ACPI Deep Sleep Fix (Kept for sleep stability without forcing quiet boot)
+
+    kernelParams = [
+
+      "mem_sleep_default=deep"
+
     ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  };
 
-  networking.hostName = "nixos"; # Define your hostname.
 
-  # Enable networking
+
+  # System Fonts
+
+  fonts.packages = with pkgs; [
+
+    nerd-fonts.jetbrains-mono
+
+    nerd-fonts.fira-code
+
+    font-awesome
+
+  ];
+
+
+
+  networking.hostName = "nixos";
+
   networking.networkmanager.enable = true;
 
-  # Set your time zone.
+
+
+  # Time zone & locale
+
   time.timeZone = "America/New_York";
 
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
+
     LC_ADDRESS = "en_US.UTF-8";
+
     LC_IDENTIFICATION = "en_US.UTF-8";
+
     LC_MEASUREMENT = "en_US.UTF-8";
+
     LC_MONETARY = "en_US.UTF-8";
+
     LC_NAME = "en_US.UTF-8";
+
     LC_NUMERIC = "en_US.UTF-8";
+
     LC_PAPER = "en_US.UTF-8";
+
     LC_TELEPHONE = "en_US.UTF-8";
+
     LC_TIME = "en_US.UTF-8";
+
   };
 
-  # Enable the X11 windowing system.
+
+
+  # Desktop Environment & Display Manager
+
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment / GDM Display Manager
   services.displayManager.gdm.enable = true;
+
   services.desktopManager.gnome.enable = true;
 
-  # Enable Hyprland System Session (Registers Hyprland in GDM)
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-  };
 
-  # Automatic Store Optimization & Garbage Collection (Prevents disk bloat)
-  nix.settings.auto-optimise-store = true;
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 7d";
-  };
 
-  # JetBrains Mono Nerd Font for Waybar Icons
-  fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-  ];
+  # Thermal Management & Compressed Swap
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "us";
-    variant = "";
-  };
+  services.thermald.enable = true;
 
-  # Enable CUPS to print documents.
+  zramSwap.enable = true;
+
+
+
+  # Printing & Audio (Pipewire)
+
   services.printing.enable = true;
 
-  # Enable sound with pipewire.
   services.pulseaudio.enable = false;
+
   security.rtkit.enable = true;
+
   services.pipewire = {
+
     enable = true;
+
     alsa.enable = true;
+
     alsa.support32Bit = true;
+
     pulse.enable = true;
+
+    wireplumber.enable = true; # Manages audio routing and quality
+
   };
 
-  # Define a user account.
+
+
+  # User Account
+
   users.users."to" = {
+
     isNormalUser = true;
+
     description = "to";
+
     extraGroups = [ "networkmanager" "wheel" ];
+
     shell = pkgs.zsh;
+
     packages = with pkgs; [];
+
   };
 
-  # Install firefox.
-  programs.firefox.enable = true;
 
-  # Allow unfree packages
+
+  # Nix Settings & Flakes
+
+  programs.firefox.enable = false;
+
   nixpkgs.config.allowUnfree = true;
-  
-  # Enable Flakes and the new Nix command line tool
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # System Profile Packages
+
+
+  # System Packages
+
   environment.systemPackages = with pkgs; [
+
     vim
+
     wget
+
     git
-    brave
+
+    alsa-utils # Provides alsamixer and alsactl
+
+    (brave.override { commandLineArgs = [ "--password-store=basic" ]; })
+
     libreoffice-fresh
+
     gnome-extension-manager
-    gnomeExtensions.pop-shell
+
+    gnomeExtensions.forge
+
     gnome-tweaks
+
     ghostty
+
+    fastfetch
+
   ];
 
-  # Enable Zsh & Oh My Zsh
-  programs.zsh = {
-    enable = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
 
-    ohMyZsh = {
-      enable = true;
-      plugins = [ "git" "sudo" ];
-      theme = "robbyrussell";
-    };
+
+  # Hyprland Integration with UWSM
+
+  programs.hyprland = {
+
+    enable = true;
+
+    xwayland.enable = true;
+
+    withUWSM = true;
+
   };
 
-  system.stateVersion = "26.05";
+
+
+  # Zsh Configuration
+
+  programs.zsh = {
+
+    enable = true;
+
+    autosuggestions.enable = true;
+
+    syntaxHighlighting.enable = true;
+
+
+
+    ohMyZsh = {
+
+      enable = true;
+
+      plugins = [ "git" "sudo" ];
+
+      theme = "robbyrussell";
+
+    };
+
+
+
+    shellAliases = {
+
+      nswitch = "sudo nixos-rebuild switch --flake /etc/nixos#nixos";
+
+      gstatus = "git status";
+
+    };
+
+
+
+    interactiveShellInit = ''
+
+      gpush() {
+
+        git add .
+
+        git commit -m "$1"
+
+        git push
+
+      }
+
+    '';
+
+  };
+
+
+
+  system.stateVersion = "24.05";
+
 }
