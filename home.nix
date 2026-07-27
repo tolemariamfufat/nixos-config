@@ -32,7 +32,7 @@
 
     pavucontrol # Audio volume GUI
 
-    
+    mediawriter # Fedora Media Writer - create bootable USBs
 
     # Updated nerd-fonts syntax for current nixpkgs:
 
